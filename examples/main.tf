@@ -1,12 +1,3 @@
-// terraform {
-//   required_providers {
-//     kafka = {
-//       source = "/home/tcrst/workwork/devground/terraform-provider-kafka/examples/terraform-provider-kafka"
-//       version = "v0.2.10"
-//     }
-//   }
-// }
-
 terraform {
   required_providers {
     kafka = {
