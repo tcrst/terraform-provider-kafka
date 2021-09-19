@@ -34,6 +34,12 @@ func kafkaTopicResource() *schema.Resource {
 				ForceNew:    true,
 				Description: "The name of the topic.",
 			},
+			"type": {
+				Type:        schema.TypeString,
+				Required:    false,
+				Optional:    true,
+				Description: "The type of the topic.",
+			},
 			"partitions": {
 				Type:         schema.TypeInt,
 				Required:     true,
@@ -91,6 +97,18 @@ func topicUpdate(d *schema.ResourceData, meta interface{}) error {
 			return err
 		}
 	}
+
+	// if d.HasChange("type") {
+	// 	// update should only be called when we're increasing partitions
+	// 	oi, ni := d.GetChange("type")
+	// 	oldType := oi.(string)
+	// 	newType := ni.(string)
+	// 	log.Printf("[INFO] Updating type from %d to %d", oldType, newType)
+	// 	t.Type = string(newType)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+	// }
 
 	timeout := time.Duration(c.Config.Timeout) * time.Second
 	stateConf := &resource.StateChangeConf{
@@ -193,6 +211,7 @@ func topicRead(d *schema.ResourceData, meta interface{}) error {
 
 	log.Printf("[DEBUG] Setting the state from Kafka %v", topic)
 	d.Set("name", topic.Name)
+	d.Set("type", topic.Type)
 	d.Set("partitions", topic.Partitions)
 	d.Set("replication_factor", topic.ReplicationFactor)
 	d.Set("config", topic.Config)

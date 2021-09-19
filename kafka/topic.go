@@ -10,6 +10,7 @@ import (
 
 type Topic struct {
 	Name              string
+	Type              string
 	Partitions        int32
 	ReplicationFactor int16
 	Config            map[string]*string
@@ -65,6 +66,7 @@ func isDefault(tc *sarama.ConfigEntry, version int) bool {
 
 func metaToTopic(d *schema.ResourceData, meta interface{}) Topic {
 	topicName := d.Get("name").(string)
+	topicType := d.Get("type").(string)
 	partitions := d.Get("partitions").(int)
 	replicationFactor := d.Get("replication_factor").(int)
 	convertedPartitions := int32(partitions)
@@ -81,6 +83,7 @@ func metaToTopic(d *schema.ResourceData, meta interface{}) Topic {
 
 	return Topic{
 		Name:              topicName,
+		Type:              topicType,
 		Partitions:        convertedPartitions,
 		ReplicationFactor: convertedRF,
 		Config:            m2,
