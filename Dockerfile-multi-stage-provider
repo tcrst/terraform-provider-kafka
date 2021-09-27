@@ -1,0 +1,20 @@
+FROM golang:1.17.1-alpine AS provider
+
+COPY . /kafka-provider/
+WORKDIR /kafka-provider
+RUN apk update && \
+    apk  --no-cache add make && \
+    ls -la 
+RUN make install_linux_local
+
+# multi-stage
+FROM debian
+
+# KAFKA_TF_PROVIDER
+ENV KAFKA_TF_PROVIDER_VERSION=0.2.10-custom-topic-type
+ENV KAFKA_TF_PROVIDER_PATH=registry.terraform.io/mongey/kafka/$KAFKA_TF_PROVIDER_VERSION/linux_amd64/
+
+RUN mkdir -p mkdir -p ~/.terraform.d/plugins/$KAFKA_TF_PROVIDER_PATH
+COPY --from=provider /root/.terraform.d/plugins/$KAFKA_TF_PROVIDER_PATH/ /root/.terraform.d/plugins/$KAFKA_TF_PROVIDER_PATH/
+
+RUN ls -la /root/.terraform.d/plugins/$KAFKA_TF_PROVIDER_PATH/
